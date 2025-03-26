@@ -18,3 +18,6 @@ Removes packages and globals of test, and returns unused space
 
 ### 4. [Test Action](test/README.md)
 Runs tests and generates JUnit XML reports.
+
+### 5. [Destroy Action](destroy/README.md)
+Removes a namespace and its associated files.

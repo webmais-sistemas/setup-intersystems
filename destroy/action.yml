@@ -1,0 +1,20 @@
+name: 'InterSystems Destroy'
+description: 'Completely remove an InterSystems Cache/IRIS namespace and its associated database'
+inputs:
+  namespace:
+    description: 'Target namespace to destroy'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Destroy namespace
+      shell: bash
+      run: |
+        cd ${{ github.action_path }}
+        go run main.go \
+          --namespace "${{ inputs.namespace }}"
+
+branding:
+  icon: 'trash'
+  color: 'red'
