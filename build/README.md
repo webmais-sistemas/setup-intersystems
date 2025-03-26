@@ -21,7 +21,6 @@ This action builds InterSystems Cache/IRIS projects using Go. It creates a names
 |-------|-------------|----------|---------|
 | namespace | Target namespace for the build | Yes | - |
 
-
 ## Directory Structure
 
 Your project should follow this structure:

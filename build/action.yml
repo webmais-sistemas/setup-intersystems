@@ -1,12 +1,11 @@
 name: 'InterSystems Build'
 description: 'Build InterSystems Cache/IRIS projects'
-author: 'webmais-sistemas'
+author: 'Webmais Sistemas'
 
 inputs:
   namespace:
     description: 'Target namespace for the build'
     required: true
-
 
 runs:
   using: 'composite'
