@@ -4,8 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"os/exec"
-	"path/filepath"
+	"os/exec"	
 	"strings"
 	"syscall"
 )
