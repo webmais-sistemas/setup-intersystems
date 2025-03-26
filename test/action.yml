@@ -28,7 +28,7 @@ runs:
         cd ${{ github.action_path }}
         go run main.go \
           --namespace "${{ inputs.namespace }}" \
-          --output-path "${{ github.workspace }}/${{ github.event.repository.name }}/${{ inputs.output-path }}" \
+          --output-path "${{ github.workspace }}/${{ inputs.output-path }}" \
           --generate-report ${{ inputs.generate-report }}
 
 branding:
