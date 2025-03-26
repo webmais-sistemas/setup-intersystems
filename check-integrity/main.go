@@ -9,15 +9,12 @@ import (
 	"syscall"
 )
 
-// InterSystemsSession represents a session with Cache or IRIS
 type InterSystemsSession struct {
 	instance string
 	command  string
 }
 
-// NewSession creates a new InterSystems session
 func NewSession() (*InterSystemsSession, error) {
-	// Check for IRIS first, then Cache
 	if path, err := exec.LookPath("irissession"); err == nil {
 			return &InterSystemsSession{
 				instance: "IRIS",
@@ -35,9 +32,7 @@ func NewSession() (*InterSystemsSession, error) {
 	return nil, fmt.Errorf("neither irissession nor csession found in PATH")
 }
 
-// ExecuteCommand runs an ObjectScript command
 func (s *InterSystemsSession) ExecuteCommand(command string) (int, error) {
-	// Add namespace parameter for better session handling
 	cmd := exec.Command(s.command, s.instance, "-U", "%SYS")
 	cmd.Stdin = strings.NewReader(command)
 	cmd.Stdout = os.Stdout
@@ -45,13 +40,12 @@ func (s *InterSystemsSession) ExecuteCommand(command string) (int, error) {
 
 	err := cmd.Run()
 	if err != nil {
-		// Try to get the exit code
 		if exitError, ok := err.(*exec.ExitError); ok {
 			if status, ok := exitError.Sys().(syscall.WaitStatus); ok {
 				return status.ExitStatus(), err
 			}
 		}
-		return 1, err // Default to exit code 1 if we can't determine the actual code
+		return 1, err
 	}
 
 	return 0, nil
@@ -68,14 +62,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Create session
 	session, err := NewSession()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error creating session: %v\n", err)
 		os.Exit(1)
 	}
-
-	// Execute integrity check query
+	
 	commands := []string{
 		fmt.Sprintf(`do:(##class(%%SYS.Namespace).Exists("%s")'=1) ##class(%%SYSTEM.Process).Terminate(,1)`, *namespace),		
     

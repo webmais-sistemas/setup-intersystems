@@ -1,0 +1,30 @@
+name: 'InterSystems Test'
+description: 'Run tests for InterSystems Cache/IRIS projects and generate JUnit XML reports'
+inputs:
+  namespace:
+    description: 'Target namespace for running tests'
+    required: true
+  output-path:
+    description: 'Path to output test results (JUnit XML format)'
+    required: false
+    default: 'test-results/test-report.xml'
+  generate-report:
+    description: 'Generate test report in JUnit XML format'
+    required: false
+    default: 'true'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Run Tests
+      shell: bash
+      run: |
+        cd ${{ github.action_path }}
+        go run main.go \
+          --namespace "${{ inputs.namespace }}" \
+          --output "${{ github.workspace }}/${{ inputs.output-path }}" \
+          --report ${{ inputs.generate-report }}
+
+branding:
+  icon: 'check-circle'
+  color: 'green'
