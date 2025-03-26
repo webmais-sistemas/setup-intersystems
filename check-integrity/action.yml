@@ -1,0 +1,25 @@
+name: 'InterSystems Check Integrity'
+description: 'Check integrity by identifying missing foreign keys'
+inputs:
+  namespace:
+    description: 'Target namespace for the integrity check'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+
+    - name: Check Integrity
+      shell: bash
+      run: |
+        cd ${{ github.action_path }}
+        go run main.go \
+          --namespace "${{ inputs.namespace }}" \
+
+branding:
+  icon: 'shield'
+  color: 'green'
