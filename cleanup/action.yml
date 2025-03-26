@@ -1,0 +1,26 @@
+name: 'InterSystems Cleanup'
+description: 'Cleanup removing packages and globals of test, and returning unused space'
+inputs:
+  namespace:
+    description: 'Target namespace to cleanup'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Go
+      uses: actions/setup-go@v5.4.0
+      with:
+        go-version: '1.24.1'
+        cache: false
+
+    - name: Cleanup Namespace
+      shell: bash
+      run: |
+        cd ${{ github.action_path }}
+        go run main.go \
+          --namespace "${{ inputs.namespace }}"
+
+branding:
+  icon: 'trash-2'
+  color: 'red'
