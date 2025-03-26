@@ -7,7 +7,7 @@ inputs:
   output-path:
     description: 'Path to output test results (JUnit XML format)'
     required: false
-    default: 'test-results/test-report.xml'
+    default: 'test-results'
   generate-report:
     description: 'Generate test report in JUnit XML format'
     required: false
@@ -28,8 +28,8 @@ runs:
         cd ${{ github.action_path }}
         go run main.go \
           --namespace "${{ inputs.namespace }}" \
-          --output "${{ github.workspace }}/${{ inputs.output-path }}" \
-          --report ${{ inputs.generate-report }}
+          --output-path "${{ github.workspace }}/${{ github.event.repository.name }}/${{ inputs.output-path }}" \
+          --generate-report ${{ inputs.generate-report }}
 
 branding:
   icon: 'check-circle'

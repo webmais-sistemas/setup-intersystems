@@ -14,7 +14,7 @@ This action runs tests for InterSystems Cache/IRIS projects and generates JUnit 
 - uses: webmais-sistemas/setup-intersystems/test@v1
   with:
     namespace: 'MYAPP'      # Required: Target namespace for running tests    
-    output-path: ''        # Optional: Path for test results (defaults to 'test-results/test-report.xml')
+    output-path: ''        # Optional: Path for test results (defaults to 'test-results')
     generate-report: false  # Optional: Generate JUnit XML report (defaults to false)
 ```
 
@@ -23,7 +23,7 @@ This action runs tests for InterSystems Cache/IRIS projects and generates JUnit 
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
 | namespace | Target namespace for running tests | Yes | - |
-| output-path | Path for test results | No | test-results/test-report.xml |
+| output-path | Path for test results | No | test-results |
 | generate-report | Generate test report in JUnit XML format | No | false |
 
 ## Test Report Format
@@ -52,7 +52,7 @@ jobs:
         with:
           namespace: 'MYAPP'
           generate-report: true
-          output-path: 'test-results/test-report.xml'
+          output-path: 'test-results'
 ```
 
 ## Test Directory Structure
