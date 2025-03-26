@@ -57,7 +57,7 @@ func main() {
 	var (
 		namespace = flag.String("namespace", "", "Target namespace")		
 		outputPath = flag.String("output-path", "", "Output path for test results")
-		generateReport = flag.Bool("generate-report", true, "Generate test report")
+		generateReport = flag.Bool("generate-report", false, "Generate test report")
 	)
 	flag.Parse()
 
@@ -87,7 +87,6 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Error executing commands: %v\n", err)
 		os.Exit(exitCode)
 	}
-	os.Exit(exitCode)
 	
 	if *generateReport && *outputPath != "" {		
 		if err := os.MkdirAll(filepath.Dir(*outputPath), 0755); err != nil {
