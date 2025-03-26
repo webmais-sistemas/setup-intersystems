@@ -8,6 +8,12 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: Set up Go
+      uses: actions/setup-go@v5.4.0
+      with:
+        go-version: '1.24.1'
+        cache: false
+
     - name: Destroy namespace
       shell: bash
       run: |
