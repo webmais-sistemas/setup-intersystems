@@ -13,6 +13,7 @@ This action builds InterSystems Cache/IRIS projects using Go. It creates a names
 - uses: webmais-sistemas/setup-intersystems/build@v1
   with:
     namespace: 'MYAPP'      # Required: Target namespace for the build
+
 ```
 
 ## Inputs
@@ -20,6 +21,7 @@ This action builds InterSystems Cache/IRIS projects using Go. It creates a names
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
 | namespace | Target namespace for the build | Yes | - |
+
 
 ## Directory Structure
 

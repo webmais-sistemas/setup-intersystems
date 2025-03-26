@@ -61,6 +61,7 @@ func (s *InterSystemsSession) ExecuteCommand(command string) (int, error) {
 func main() {
 	var (
 		namespace = flag.String("namespace", "", "Target namespace")
+		projectPath = flag.String("project", "", "Project path")
 	)
 	flag.Parse()
 
@@ -70,7 +71,7 @@ func main() {
 	}
 
 	// Get absolute path for workdir
-	absWorkdir, err := filepath.Abs(filepath.Dir(os.Getenv("GITHUB_WORKSPACE")))
+	absWorkdir, err := filepath.Abs(filepath.Join(filepath.Dir(os.Getenv("GITHUB_WORKSPACE")), *projectPath))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error resolving workdir path: %v\n", err)
 		os.Exit(1)
