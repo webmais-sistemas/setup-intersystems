@@ -56,8 +56,8 @@ func (s *InterSystemsSession) ExecuteCommand(command string) (int, error) {
 func main() {
 	var (
 		namespace = flag.String("namespace", "", "Target namespace")		
-		outputPath = flag.String("output", "", "Output path for test results")
-		generateReport = flag.Bool("report", true, "Generate test report")
+		outputPath = flag.String("output-path", "", "Output path for test results")
+		generateReport = flag.Bool("generate-report", true, "Generate test report")
 	)
 	flag.Parse()
 
@@ -96,11 +96,10 @@ func main() {
 		}
 
 		// Generate JUnit XML report
-		commands := []string{
-			fmt.Sprintf(`do:(##class(%%SYS.Namespace).Exists("%s")'=1) ##class(%%SYSTEM.Process).Terminate(,0)`, *namespace),
+		commands := []string{			
 			fmt.Sprintf(`set $namespace = "%s"`, *namespace),
 			fmt.Sprintf(`do ##class(%%File).CreateDirectoryChain("%s")`, *outputPath),
-			fmt.Sprintf(`set File=##class(%%File).%%New("%s")`, *outputPath),
+			fmt.Sprintf(`set File=##class(%%File).%%New("%s/test-report.xml")`, *outputPath),
 			fmt.Sprintf(`set i=$order(^UnitTest.Result(""),-1)`),
 			fmt.Sprintf(`if i="" do ##class(%%SYSTEM.Process).Terminate(,0)`),
 			fmt.Sprintf(`kill ^||TMP`),
