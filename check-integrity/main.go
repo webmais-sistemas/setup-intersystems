@@ -79,7 +79,7 @@ func main() {
 	commands := []string{
 		// Switch to %SYS namespace and terminate existing processes
 		fmt.Sprintf(`set $namespace = "%%SYS"`),
-		fmt.Sprintf(`do:(##class(%%SYS.Namespace).Exists("%s")=1) ##class(%%SYSTEM.Process).Terminate(,1)`, *namespace),
+		fmt.Sprintf(`do:(##class(%%SYS.Namespace).Exists("%s")'=1) ##class(%%SYSTEM.Process).Terminate(,1)`, *namespace),
 		fmt.Sprintf(`set $namespace = "%s"`, *namespace),
 		
 		// Check for missing foreign keys
