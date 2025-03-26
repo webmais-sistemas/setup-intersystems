@@ -70,7 +70,7 @@ func main() {
 	}
 
 	// Get absolute path for workdir
-	absWorkdir, err := filepath.Abs(".")
+	absWorkdir, err := filepath.Abs(filepath.Dir(os.Getenv("GITHUB_WORKSPACE")))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error resolving workdir path: %v\n", err)
 		os.Exit(1)
