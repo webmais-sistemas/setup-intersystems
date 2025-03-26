@@ -14,3 +14,7 @@ Checks integrity database: missing foreign keys
 
 ### 3. [Cleanup Action](cleanup/README.md)
 Removes packages and globals of test, and returns unused space
+
+
+### 4. [Test Action](test/README.md)
+Runs tests and generates JUnit XML reports.

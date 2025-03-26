@@ -10,15 +10,12 @@ import (
 	"syscall"
 )
 
-// InterSystemsSession represents a session with Cache or IRIS
 type InterSystemsSession struct {
 	instance string
 	command  string
 }
 
-// NewSession creates a new InterSystems session
-func NewSession() (*InterSystemsSession, error) {
-	// Check for IRIS first, then Cache
+func NewSession() (*InterSystemsSession, error) {	
 	if path, err := exec.LookPath("irissession"); err == nil {
 			return &InterSystemsSession{
 				instance: "IRIS",
@@ -36,9 +33,7 @@ func NewSession() (*InterSystemsSession, error) {
 	return nil, fmt.Errorf("neither irissession nor csession found in PATH")
 }
 
-// ExecuteCommand executes an ObjectScript command and returns the exit code
 func (s *InterSystemsSession) ExecuteCommand(command string) (int, error) {
-	// Add namespace parameter for better session handling
 	cmd := exec.Command(s.command, s.instance, "-U", "%SYS")
 	cmd.Stdin = strings.NewReader(command)
 	cmd.Stdout = os.Stdout
@@ -46,13 +41,12 @@ func (s *InterSystemsSession) ExecuteCommand(command string) (int, error) {
 
 	err := cmd.Run()
 	if err != nil {
-		// Try to get the exit code
 		if exitError, ok := err.(*exec.ExitError); ok {
 			if status, ok := exitError.Sys().(syscall.WaitStatus); ok {
 				return status.ExitStatus(), err
 			}
 		}
-		return 1, err // Default to exit code 1 if we can't determine the actual code
+		return 1, err
 	}
 
 	return 0, nil
@@ -77,7 +71,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Create new InterSystems session
 	session, err := NewSession()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
@@ -118,8 +111,7 @@ func main() {
 		fmt.Sprintf(`if (lastError'="") { do $SYSTEM.OBJ.DisplayError(lastError) do ##class(%%SYSTEM.Process).Terminate(,1) }`),
 		fmt.Sprintf(`do ##class(%%SYSTEM.Process).Terminate(,0)`),
 	}
-
-	// Execute all commands
+	
 	command := strings.Join(commands, "\n")
 	exitCode, err := session.ExecuteCommand(command)
 	if err != nil {
