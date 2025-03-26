@@ -88,9 +88,7 @@ func main() {
 	resource := "%DB_" + strings.ToUpper(*namespace)
 
 	// Build the ObjectScript commands
-	commands := []string{
-		// Switch to %SYS namespace and terminate existing processes
-		fmt.Sprintf(`set $namespace = "%%SYS"`),
+	commands := []string{		
 		fmt.Sprintf(`do:(##class(%%SYS.Namespace).Exists("%s")=1) ##class(%%SYSTEM.Process).Terminate(,1)`, *namespace),
 
 		// Create database directory and database

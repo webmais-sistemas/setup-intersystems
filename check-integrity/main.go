@@ -77,24 +77,21 @@ func main() {
 
 	// Execute integrity check query
 	commands := []string{
-		// Switch to %SYS namespace and terminate existing processes
-		fmt.Sprintf(`set $namespace = "%%SYS"`),
-		fmt.Sprintf(`do:(##class(%%SYS.Namespace).Exists("%s")'=1) ##class(%%SYSTEM.Process).Terminate(,1)`, *namespace),
-		fmt.Sprintf(`set $namespace = "%s"`, *namespace),
-		
+		fmt.Sprintf(`do:(##class(%%SYS.Namespace).Exists("%s")'=1) ##class(%%SYSTEM.Process).Terminate(,1)`, *namespace),		
+    
 		// Check for missing foreign keys
+		fmt.Sprintf(`set $namespace = "%s"`, *namespace),
 		fmt.Sprintf(`set class = ""`),
 		fmt.Sprintf(`set sql = ##class(%%SQL.Statement).%%New()`),
 		fmt.Sprintf(`do sql.%%Prepare("SELECT tClass.ID As class, tProp.Name As property, tProp.Type As type FROM %%Dictionary.CompiledClass AS tClass JOIN %%Dictionary.CompiledProperty AS tProp ON (tProp.parent = tClass.ID) LEFT JOIN %%Dictionary.CompiledForeignKey AS tFk ON (tFk.parent = tProp.parent AND tFk.Properties = tProp.Name) WHERE tClass.ID %%MATCHES '[a-z,A-Z]*' AND Super LIKE '%%Persistent%%' AND tProp.Type %%MATCHES '[a-z,A-Z]*' AND (SELECT COUNT(ID) FROM %%Dictionary.CompiledClass As tClass WHERE tClass.ID=tProp.Type AND Super LIKE '%%Persistent%%')<>0 AND tProp.Relationship = 0 AND tProp.Transient = 0 AND tFk.Name IS NULL")`),
 		fmt.Sprintf(`set query = sql.%%Execute()`),
-		fmt.Sprintf(`while query.%%Next() {`),
-		fmt.Sprintf(`
+		fmt.Sprintf(`while query.%%Next() {
 			if (class '= query.%%Get("class")) {
 				set class = query.%%Get("class")
 				write !,""
 				write !,"Classe: ["_$replace(class,".","/")_".cls"]"
 			}
-			write !,"ForeignKey fk{"_query.%%Get("property")_"}(_query.%%Get("type")_"();")"
+			write !,"ForeignKey fk{"_query.%%Get("property")_"}_"_query.%%Get("type")_"();")"
 		}`),
 		
 		fmt.Sprintf(`do query.%%Close()`),
