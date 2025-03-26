@@ -78,7 +78,7 @@ func main() {
 	// Execute integrity check query
 	commands := []string{
 		fmt.Sprintf(`do:(##class(%%SYS.Namespace).Exists("%s")'=1) ##class(%%SYSTEM.Process).Terminate(,1)`, *namespace),		
-		
+    
 		// Check for missing foreign keys
 		fmt.Sprintf(`set $namespace = "%s"`, *namespace),
 		fmt.Sprintf(`set class = ""`),
