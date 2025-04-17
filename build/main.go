@@ -103,16 +103,12 @@ func main() {
 	if *snpm {
 		commands = append(commands, []string{
 			// Switch to target namespace and import files
-			fmt.Sprintf(`kill`),
-			fmt.Sprintf(`set $namespace = "%s"`, *namespace),
-			fmt.Sprintf(`set oldNamespace = $namespace`),
-			fmt.Sprintf(`set $namespace = "%%SYS"`),
 			fmt.Sprintf(`set file = ##class(%%Library.FileBinaryStream).%%New()`),
 			fmt.Sprintf(`do file.Write("")`),
 			fmt.Sprintf(`set filename = file.Filename`),
 			fmt.Sprintf(`kill file`),
 			fmt.Sprintf(`do $SYSTEM.OBJ.Export("Monitor.Sample.cls", .filename)`),
-			fmt.Sprintf(`set $namespace = oldNamespace`),
+			fmt.Sprintf(`set $namespace = "%s"`, *namespace),
 			fmt.Sprintf(`do $SYSTEM.OBJ.Load(filename, "ck")`),
 			fmt.Sprintf(`do ##class(%%File).Delete(filename)`),
 		}...)
