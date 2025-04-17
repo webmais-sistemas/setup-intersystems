@@ -106,7 +106,6 @@ func main() {
 			fmt.Sprintf(`kill`),
 			fmt.Sprintf(`set $namespace = "%s"`, *namespace),
 			fmt.Sprintf(`set oldNamespace = $namespace`),
-			fmt.Sprintf(`new $namespace`),
 			fmt.Sprintf(`set $namespace = "%%SYS"`),
 			fmt.Sprintf(`set file = ##class(%%Library.FileBinaryStream).%%New()`),
 			fmt.Sprintf(`do file.Write("")`),
