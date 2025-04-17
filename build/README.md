@@ -13,6 +13,7 @@ This action builds InterSystems Cache/IRIS projects using Go. It creates a names
 - uses: webmais-sistemas/setup-intersystems/build@v1
   with:
     namespace: 'MYAPP'      # Required: Target namespace for the build
+    snpm: false              # Optional: Enable SNPM MonitorTools (default: false)
 
 ```
 
@@ -21,6 +22,7 @@ This action builds InterSystems Cache/IRIS projects using Go. It creates a names
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
 | namespace | Target namespace for the build | Yes | - |
+| snpm | Enable SNPM MonitorTools | No | false |
 
 
 ## Directory Structure

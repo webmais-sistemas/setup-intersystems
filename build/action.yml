@@ -10,6 +10,10 @@ inputs:
     description: 'Project path (defaults to repository name)'
     required: false
     default: ${{ github.event.repository.name }}
+  snpm:
+    description: 'Enable SNPM MonitorTools (default: false)'
+    required: false
+    default: 'false'
 
 runs:
   using: 'composite'
@@ -26,7 +30,8 @@ runs:
         cd ${{ github.action_path }}
         go run main.go \
           --namespace "${{ inputs.namespace }}" \
-          --project "${{ inputs.project-path }}"
+          --project "${{ inputs.project-path }}" \
+          --snpm "${{ inputs.snpm }}"
 
 branding:
   icon: 'package'

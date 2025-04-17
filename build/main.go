@@ -15,20 +15,20 @@ type InterSystemsSession struct {
 	command  string
 }
 
-func NewSession() (*InterSystemsSession, error) {	
+func NewSession() (*InterSystemsSession, error) {
 	if path, err := exec.LookPath("irissession"); err == nil {
-			return &InterSystemsSession{
-				instance: "IRIS",
-				command:  path,
-			}, nil
-		}
+		return &InterSystemsSession{
+			instance: "IRIS",
+			command:  path,
+		}, nil
+	}
 
 	if path, err := exec.LookPath("csession"); err == nil {
-			return &InterSystemsSession{
-				instance: "CACHE",
-				command:  path,
-			}, nil
-		}
+		return &InterSystemsSession{
+			instance: "CACHE",
+			command:  path,
+		}, nil
+	}
 
 	return nil, fmt.Errorf("neither irissession nor csession found in PATH")
 }
@@ -54,8 +54,9 @@ func (s *InterSystemsSession) ExecuteCommand(command string) (int, error) {
 
 func main() {
 	var (
-		namespace = flag.String("namespace", "", "Target namespace")
+		namespace   = flag.String("namespace", "", "Target namespace")
 		projectPath = flag.String("project", "", "Project path")
+		snpm        = flag.Bool("snpm", false, "Enable SNPM process (default: false)")
 	)
 	flag.Parse()
 
@@ -81,7 +82,7 @@ func main() {
 	resource := "%DB_" + strings.ToUpper(*namespace)
 
 	// Build the ObjectScript commands
-	commands := []string{		
+	commands := []string{
 		fmt.Sprintf(`do:(##class(%%SYS.Namespace).Exists("%s")=1) ##class(%%SYSTEM.Process).Terminate(,1)`, *namespace),
 
 		// Create database directory and database
@@ -97,7 +98,28 @@ func main() {
 
 		// Verify namespace creation
 		fmt.Sprintf(`do:(##class(Config.Namespaces).Exists("%s")'=1) ##class(%%SYSTEM.Process).Terminate(,1)`, *namespace),
+	}
 
+	if *snpm {
+		commands = append(commands, []string{
+			// Switch to target namespace and import files
+			fmt.Sprintf(`kill`),
+			fmt.Sprintf(`set $namespace = "%s"`, *namespace),
+			fmt.Sprintf(`set oldNamespace = $namespace`),
+			fmt.Sprintf(`new $namespace`),
+			fmt.Sprintf(`set $namespace = "%%SYS"`),
+			fmt.Sprintf(`set file = ##class(%%Library.FileBinaryStream).%%New()`),
+			fmt.Sprintf(`do file.Write("")`),
+			fmt.Sprintf(`set filename = file.Filename`),
+			fmt.Sprintf(`kill file`),
+			fmt.Sprintf(`do $SYSTEM.OBJ.Export("Monitor.Sample.cls", .filename)`),
+			fmt.Sprintf(`set $namespace = oldNamespace`),
+			fmt.Sprintf(`do $SYSTEM.OBJ.Load(filename, "ck")`),
+			fmt.Sprintf(`do ##class(%%File).Delete(filename)`),
+		}...)
+	}
+
+	commands = append(commands, []string{
 		// Switch to target namespace and import files
 		fmt.Sprintf(`kill`),
 		fmt.Sprintf(`set $namespace = "%s"`, *namespace),
@@ -110,8 +132,8 @@ func main() {
 		fmt.Sprintf(`set lastError = $get(%%objlasterror)`),
 		fmt.Sprintf(`if (lastError'="") { do $SYSTEM.OBJ.DisplayError(lastError) do ##class(%%SYSTEM.Process).Terminate(,1) }`),
 		fmt.Sprintf(`do ##class(%%SYSTEM.Process).Terminate(,0)`),
-	}
-	
+	}...)
+
 	command := strings.Join(commands, "\n")
 	exitCode, err := session.ExecuteCommand(command)
 	if err != nil {
