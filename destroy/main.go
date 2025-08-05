@@ -70,7 +70,7 @@ func main() {
 	commands := []string{
 		fmt.Sprintf(`do:(##class(%%SYS.Namespace).Exists("%s")'=1) ##class(%%SYSTEM.Process).Terminate(,0)`, *namespace),
 		fmt.Sprintf(`set path = ##class(Config.Databases).GetDirectory("%s")`, *namespace),
-		fmt.Sprintf(`do ##class(%%File).CreateDirectory(path)`),
+		fmt.Sprintf(`do ##class(Security.Applications).Delete("/csp/%s")`, *namespace),	
 		fmt.Sprintf(`do ##class(Config.Namespaces).Delete("%s")`, *namespace),
 		fmt.Sprintf(`do ##class(Config.Databases).Delete("%s")`, *namespace),
 		fmt.Sprintf(`do ##class(SYS.Database).DeleteDatabase(path)`),
