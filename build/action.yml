@@ -15,7 +15,11 @@ inputs:
     required: false
     default: 'false'
   web:
-    description: 'Enable web server (default: false)'
+    description: 'Compile CSP (default: false)'
+    required: false
+    default: 'false'
+  inc:
+    description: 'Compile Includes (default: false)'
     required: false
     default: 'false'
 

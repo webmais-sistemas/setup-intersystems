@@ -58,6 +58,7 @@ func main() {
 		projectPath = flag.String("project", "", "Project path")
 		snpm        = flag.Bool("snpm", false, "Enable SNPM process (default: false)")
 		web         = flag.Bool("web", false, "Enable web server (default: false)")
+		inc         = flag.Bool("inc", false, "Enable includes (default: false)")
 	)
 	flag.Parse()
 
@@ -144,8 +145,7 @@ func main() {
 		// Switch to target namespace and import files
 		fmt.Sprintf(`kill`),
 		fmt.Sprintf(`set $namespace = "%s"`, *namespace),
-		fmt.Sprintf(`set workcls = "%s/src"`, strings.ReplaceAll(absWorkdir, "\\", "/")),
-		fmt.Sprintf(`do ##class(%%SYSTEM.OBJ).ImportDir(workcls,"*.inc","c","",1)`),
+		fmt.Sprintf(`set workcls = "%s/src"`, strings.ReplaceAll(absWorkdir, "\\", "/")),		
 		fmt.Sprintf(`do ##class(%%SYSTEM.OBJ).ImportDir(workcls,"*.cls","c","",1)`),
 
 		// Set test root and check for errors
@@ -154,6 +154,15 @@ func main() {
 		fmt.Sprintf(`if (lastError'="") { do $SYSTEM.OBJ.DisplayError(lastError) do ##class(%%SYSTEM.Process).Terminate(,1) }`),
 		fmt.Sprintf(`do ##class(%%SYSTEM.Process).Terminate(,0)`),
 	}...)
+
+	if *inc {
+		commands = append(commands, []string{
+			// Switch to target namespace and import files
+			fmt.Sprintf(`set workinc = "%s/inc/"`, strings.ReplaceAll(absWorkdir, "\\", "/")),
+			fmt.Sprintf(`set $namespace = "%s"`, *namespace),
+			fmt.Sprintf(`do ##class(%%SYSTEM.OBJ).ImportDir(workinc,"*.inc","c","",1)`),
+		}...)
+	}
 
 	if *web {
 		commands = append(commands, []string{
