@@ -14,8 +14,6 @@ This action builds InterSystems Cache/IRIS projects using Go. It creates a names
   with:
     namespace: 'MYAPP'      # Required: Target namespace for the build
     snpm: false              # Optional: Enable SNPM MonitorTools (default: false)
-    web: false               # Optional: Enable web server (default: false)
-    inc: false               # Optional: Enable includes (default: false)
 
 ```
 
@@ -25,8 +23,6 @@ This action builds InterSystems Cache/IRIS projects using Go. It creates a names
 |-------|-------------|----------|---------|
 | namespace | Target namespace for the build | Yes | - |
 | snpm | Enable SNPM MonitorTools | No | false |
-| web | Enable web server | No | false |  
-| inc | Enable includes | No | false |
 
 ## Directory Structure
 
