@@ -153,7 +153,7 @@ func main() {
 		// Set test root and check for errors
 		fmt.Sprintf(`set ^UnitTestRoot = "%s/test"`, strings.ReplaceAll(absWorkdir, "\\", "/")),
 		fmt.Sprintf(`set lastError = $get(%%objlasterror)`),
-		fmt.Sprintf(`if (lastError [ "") { set lastError = "lib_Json" }`),
+		fmt.Sprintf(`if (lastError [ "lib_Json") { set lastError = "" }`),
 		fmt.Sprintf(`if (lastError'="") { do $SYSTEM.OBJ.DisplayError(lastError) do ##class(%%SYSTEM.Process).Terminate(,1) }`),
 		fmt.Sprintf(`do ##class(%%SYSTEM.Process).Terminate(,0)`),
 	}...)
