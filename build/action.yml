@@ -39,7 +39,9 @@ runs:
         go run main.go \
           --namespace "${{ inputs.namespace }}" \
           --project "${{ inputs.project-path }}" \
-          --snpm "${{ inputs.snpm }}"
+          --snpm "${{ inputs.snpm }}" \
+          --web "${{ inputs.web }}" \
+          --inc "${{ inputs.inc }}"
 
 branding:
   icon: 'package'
