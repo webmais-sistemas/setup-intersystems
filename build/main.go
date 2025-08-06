@@ -56,9 +56,7 @@ func main() {
 	var (
 		namespace   = flag.String("namespace", "", "Target namespace")
 		projectPath = flag.String("project", "", "Project path")
-		snpm        = flag.Bool("snpm", false, "Enable SNPM process (default: false)")
-		web         = flag.Bool("web", false, "Enable web server (default: false)")
-		inc         = flag.Bool("inc", false, "Enable includes (default: false)")
+		snpm        = flag.Bool("snpm", false, "Enable SNPM process (default: false)")		
 	)
 	flag.Parse()
 
@@ -102,30 +100,30 @@ func main() {
 		fmt.Sprintf(`do:(##class(Config.Namespaces).Exists("%s")'=1) ##class(%%SYSTEM.Process).Terminate(,1)`, *namespace),
 	}
 
-	if *web {
-		commands = append(commands, []string{
-			// Switch to target namespace and import files
-			fmt.Sprintf(`set workweb = "%s/web/"`, strings.ReplaceAll(absWorkdir, "\\", "/")),
-			fmt.Sprintf(`set app = $zconvert("/csp/%s","L")`, *namespace),
-			fmt.Sprintf(`kill properties`),
-			fmt.Sprintf(`set properties("IsNamespaceDefault") = "1"`),
-			fmt.Sprintf(`set properties("AutheEnabled") = "32"`),
-			fmt.Sprintf(`set properties("InbndWebServicesEnabled") = "0"`),
-			fmt.Sprintf(`set properties("Timeout") = "1800"`),
-			fmt.Sprintf(`set properties("CookiePath") = app`),
-			fmt.Sprintf(`set properties("ServeFiles") = "1"`),
-			fmt.Sprintf(`set properties("ServeFilesTimeout") = "900"`),
-			fmt.Sprintf(`set properties("Recurse") = "1"`),
-			fmt.Sprintf(`set properties("AutoCompile") = "0"`),
-			fmt.Sprintf(`set properties("LockCSPName") = "0"`),
-			fmt.Sprintf(`set properties("SuperClass") = "lib.CSPPage"`),
-			fmt.Sprintf(`set properties("Path") = workweb`),
-			fmt.Sprintf(`set properties("NameSpace") = "%s"`, *namespace),
-			fmt.Sprintf(`set properties("LoginPage") = "/csp/%s/system/www/index.csp"`, *namespace),
-			fmt.Sprintf(`set properties("ErrorPage") = "/csp/%s/system/www/error.csp"`, *namespace),
-			fmt.Sprintf(`do ##class(Security.Applications).Create(app,.properties)`),
-		}...)
-	}
+	
+	commands = append(commands, []string{
+		// Switch to target namespace and import files
+		fmt.Sprintf(`set workweb = "%s/web/"`, strings.ReplaceAll(absWorkdir, "\\", "/")),
+		fmt.Sprintf(`set app = $zconvert("/csp/%s","L")`, *namespace),
+		fmt.Sprintf(`kill properties`),
+		fmt.Sprintf(`set properties("IsNamespaceDefault") = "1"`),
+		fmt.Sprintf(`set properties("AutheEnabled") = "32"`),
+		fmt.Sprintf(`set properties("InbndWebServicesEnabled") = "0"`),
+		fmt.Sprintf(`set properties("Timeout") = "1800"`),
+		fmt.Sprintf(`set properties("CookiePath") = app`),
+		fmt.Sprintf(`set properties("ServeFiles") = "1"`),
+		fmt.Sprintf(`set properties("ServeFilesTimeout") = "900"`),
+		fmt.Sprintf(`set properties("Recurse") = "1"`),
+		fmt.Sprintf(`set properties("AutoCompile") = "0"`),
+		fmt.Sprintf(`set properties("LockCSPName") = "0"`),
+		fmt.Sprintf(`set properties("SuperClass") = "lib.CSPPage"`),
+		fmt.Sprintf(`set properties("Path") = workweb`),
+		fmt.Sprintf(`set properties("NameSpace") = "%s"`, *namespace),
+		fmt.Sprintf(`set properties("LoginPage") = "/csp/%s/system/www/index.csp"`, *namespace),
+		fmt.Sprintf(`set properties("ErrorPage") = "/csp/%s/system/www/error.csp"`, *namespace),
+		fmt.Sprintf(`do ##class(Security.Applications).Create(app,.properties)`),
+	}...)
+	
 
 	if *snpm {
 		commands = append(commands, []string{
@@ -145,8 +143,12 @@ func main() {
 		// Switch to target namespace and import files
 		fmt.Sprintf(`kill`),
 		fmt.Sprintf(`set $namespace = "%s"`, *namespace),
-		fmt.Sprintf(`set workcls = "%s/src"`, strings.ReplaceAll(absWorkdir, "\\", "/")),		
+		fmt.Sprintf(`set workcls = "%s/src"`, strings.ReplaceAll(absWorkdir, "\\", "/")),
+		fmt.Sprintf(`do ##class(%%SYSTEM.OBJ).ImportDir(workcls,"*.inc","c","",1)`),		
 		fmt.Sprintf(`do ##class(%%SYSTEM.OBJ).ImportDir(workcls,"*.cls","c","",1)`),
+		fmt.Sprintf(`set web = $zconvert("/csp/%s","L")`, *namespace),
+		fmt.Sprintf(`do ##class(%%SYSTEM.CSP).LoadRuleDir(web,"c")`),
+		fmt.Sprintf(`do ##class(%%SYSTEM.CSP).LoadPageDir(web,"c")`),
 
 		// Set test root and check for errors
 		fmt.Sprintf(`set ^UnitTestRoot = "%s/test"`, strings.ReplaceAll(absWorkdir, "\\", "/")),
@@ -154,25 +156,6 @@ func main() {
 		fmt.Sprintf(`if (lastError'="") { do $SYSTEM.OBJ.DisplayError(lastError) do ##class(%%SYSTEM.Process).Terminate(,1) }`),
 		fmt.Sprintf(`do ##class(%%SYSTEM.Process).Terminate(,0)`),
 	}...)
-
-	if *inc {
-		commands = append(commands, []string{
-			// Switch to target namespace and import files
-			fmt.Sprintf(`set workinc = "%s/inc/"`, strings.ReplaceAll(absWorkdir, "\\", "/")),
-			fmt.Sprintf(`set $namespace = "%s"`, *namespace),
-			fmt.Sprintf(`do ##class(%%SYSTEM.OBJ).ImportDir(workinc,"*.inc","c","",1)`),
-		}...)
-	}
-
-	if *web {
-		commands = append(commands, []string{
-			fmt.Sprintf(`kill`),
-			fmt.Sprintf(`set $namespace = "%s"`, *namespace),
-			fmt.Sprintf(`set web = $zconvert("/csp/%s","L")`, *namespace),
-			fmt.Sprintf(`do $SYSTEM.CSP.LoadRuleDir(web,"c")`),
-			fmt.Sprintf(`do $SYSTEM.CSP.LoadPageDir(web,"c")`),
-		}...)
-	}
 
 	command := strings.Join(commands, "\n")
 	exitCode, err := session.ExecuteCommand(command)
