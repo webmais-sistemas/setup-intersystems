@@ -47,7 +47,7 @@ jobs:
   destroy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       - name: Destroy namespace
         uses: webmais-sistemas/setup-intersystems/destroy@v1
