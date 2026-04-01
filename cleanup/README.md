@@ -40,7 +40,7 @@ jobs:
   cleanup:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       - name: Cleanup Namespace
         uses: webmais-sistemas/setup-intersystems/cleanup@v1
